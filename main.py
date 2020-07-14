@@ -61,7 +61,7 @@ async def join_event(*,
 		return
 	
 	await member.add_roles(role)
-	event_channel: discord.TextChannel = discord.utils.get(guild.channels, name=f"{event}{config.EVENT_SUFFIX}")
+	event_channel: discord.TextChannel = [x for x in guild.channels if x.name[:1] == str(event)][0]
 	await event_channel.send(config.EVENT_JOIN.replace("@User", f"<@{member.id}>"))
 	
 
@@ -197,6 +197,18 @@ async def leave(*,
 	list_msg: discord.Message = [x async for x in org_channel.history() if config.LIST_KEY in x.content][0]
 	await edit_event_status(event, config.PRIVATE_EVENT, list_msg)
 	await channel.send(config.SET_PRIVATE_MSG.replace("@User", f"<@{member.id}>"))
+
+
+@nemo.command("!name")
+@helper.event_command
+@helper.auto_delete
+async def rename(*,
+				channel: discord.TextChannel,
+				member: discord.Member,
+				message: discord.Message,
+				event: int,
+				**_):
+	await channel.edit(name=f"{event}-{message.content[len('!name '):]}")
 
 
 if __name__ == "__main__":
