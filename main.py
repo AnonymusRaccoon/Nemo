@@ -170,5 +170,19 @@ async def open_cmd(*,
 	await org_channel.send(config.NEW_EVENT.replace("@everyone", f"{guild.default_role}").replace("@id", str(event)))
 
 
+@nemo.command("!leave")
+@helper.event_command
+@helper.auto_delete
+async def leave(*,
+				channel: discord.TextChannel,
+				member: discord.Member,
+				guild: discord.Guild,
+				event: int,
+				**_):
+	event_role = discord.utils.get(guild.roles, name=f"{config.PARTICIPANT_PREFIX}{event}")
+	await member.remove_roles(event_role)
+	await channel.send(config.LEAVE_MSG.replace("@User", f"<@{member.id}>"))
+
+
 if __name__ == "__main__":
 	nemo.run(config.TOKEN)

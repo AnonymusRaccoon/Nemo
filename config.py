@@ -75,3 +75,5 @@ NEW_EVENT_KEY = """Nouvel event ("""
 EVENT_JOIN = """@User vient de rejoindre l'event.
 Vous pouvez le quitter en tappant !leave.
 """
+
+LEAVE_MSG = "@User vient de quitter l'event."
