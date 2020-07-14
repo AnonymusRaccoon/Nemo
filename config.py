@@ -67,6 +67,7 @@ Faire un event privé et inviter les personnes individuellement:
 STOP_MSG = """Pour confirmer la fermeture de l'event, cliquez sur ✅."""
 
 SET_EVENT_MSG = """@User a changé la description de l'event pour "@Status"."""
+SET_PRIVATE_MSG = """@User a rendu l'event privé."""
 
 NEW_EVENT = """@everyone Nouvel event (@id)"""
 NEW_EVENT_KEY = """Nouvel event ("""

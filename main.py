@@ -184,5 +184,20 @@ async def leave(*,
 	await channel.send(config.LEAVE_MSG.replace("@User", f"<@{member.id}>"))
 
 
+@nemo.command("!private")
+@helper.event_command
+@helper.auto_delete
+async def leave(*,
+				channel: discord.TextChannel,
+				member: discord.Member,
+				guild: discord.Guild,
+				event: int,
+				**_):
+	org_channel: discord.TextChannel = discord.utils.get(guild.channels, name=config.ORGANIZATION_NAME)
+	list_msg: discord.Message = [x async for x in org_channel.history() if config.LIST_KEY in x.content][0]
+	await edit_event_status(event, config.PRIVATE_EVENT, list_msg)
+	await channel.send(config.SET_PRIVATE_MSG.replace("@User", f"<@{member.id}>"))
+
+
 if __name__ == "__main__":
 	nemo.run(config.TOKEN)
