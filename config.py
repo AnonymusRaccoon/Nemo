@@ -48,6 +48,9 @@ CREATE_KEY = "Créer un event"
 CONFIGURING_EVENT = "@User configure l'event."
 EVENT_CONFIGURING_KEY = "configure l'event."
 
+PRIVATE_EVENT = "L'event est privé, vous ne pouvez pas le rejoindre."
+
+
 EVENT_SUFFIX = "-event"
 ORGANIZER_PREFIX = "Organisateur-"
 PARTICIPANT_PREFIX = "Event-"
@@ -67,3 +70,8 @@ SET_EVENT_MSG = """@User a changé la description de l'event pour "@Status"."""
 
 NEW_EVENT = """@everyone Nouvel event (@id)"""
 NEW_EVENT_KEY = """Nouvel event ("""
+
+
+EVENT_JOIN = """@User vient de rejoindre l'event.
+Vous pouvez le quitter en tappant !leave.
+"""

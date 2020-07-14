@@ -40,8 +40,35 @@ async def help_msg(channel: discord.TextChannel):
 	await msg.add_reaction("✅")
 
 
+@nemo.reaction(lambda reaction, member: reaction.message.author.bot and config.LIST_KEY in reaction.message.content)
+async def join_event(*,
+					 reaction: discord.Reaction,
+					 member: discord.Member,
+					 guild: discord.Guild,
+					 channel: discord.TextChannel,
+					 **_):
+	event: int = number_emojis.index(reaction.emoji) + 1
+	role: str = discord.utils.get(guild.roles, name=f"{config.PARTICIPANT_PREFIX}{event}")
+	if role is None or role in member.roles:
+		return
+	
+	list_msg: discord.Message = [x async for x in channel.history() if config.LIST_KEY in x.content][0]
+	try:
+		status = list_msg.content.split('\n')[event + 1]
+	except IndexError:
+		return
+	if config.EMPTY_SLOT in status or config.EVENT_CONFIGURING_KEY in status or config.PRIVATE_EVENT in status:
+		return
+	
+	await member.add_roles(role)
+	event_channel: discord.TextChannel = discord.utils.get(guild.channels, name=f"{event}{config.EVENT_SUFFIX}")
+	await event_channel.send(config.EVENT_JOIN.replace("@User", f"<@{member.id}>"))
+	
+
 @nemo.reaction(lambda reaction, member: reaction.message.author.bot and config.CREATE_KEY in reaction.message.content)
-async def create_event(reaction: discord.Reaction, message: discord.Message, member: discord.Member,
+async def create_event(reaction: discord.Reaction, 
+					   message: discord.Message, 
+					   member: discord.Member,
 					   guild: discord.Guild, **_):
 	list_msg: discord.Message = [x async for x in message.channel.history() if config.LIST_KEY in x.content][0]
 	index = get_new_event_index(list_msg)
