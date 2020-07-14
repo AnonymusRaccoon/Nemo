@@ -15,12 +15,14 @@ class Nemo(discord.Client):
 
 	async def on_message(self, message: discord.Message):
 		cmd = message.content.split()
+		if not any(cmd):
+			return
 		f = self.commands.get(cmd[0])
 		if f is None:
 			return
 		print(f"{message.author.display_name} used the command: '{cmd[0]}'")
 		try:
-			await f(cmd[1::], message=message, guild=message.guild, channel=message.channel)
+			await f(args=cmd[1::], message=message, guild=message.guild, channel=message.channel, member=message.author)
 		except Exception:
 			await message.channel.send(f"Fatal error: {traceback.format_exc()}")
 			raise

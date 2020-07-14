@@ -44,6 +44,10 @@ async def help_msg(channel: discord.TextChannel):
 async def create_event(reaction: discord.Reaction, message: discord.Message, member: discord.Member, guild: discord.Guild, **_):
 	list_msg: discord.Message = [x async for x in message.channel.history() if config.LIST_KEY in x.content][0] 
 	index = get_new_event_index(list_msg)
+	if index == -1:
+		await reaction.remove(member)
+		return
+	
 	await edit_event_status(index, config.CONFIGURING_EVENT.replace("@User", f"<@{member.id}>"), list_msg)
 	await reaction.remove(member)
 	
@@ -62,8 +66,10 @@ async def create_event(reaction: discord.Reaction, message: discord.Message, mem
 	
 
 def get_new_event_index(msg: discord.Message):
+	if config.EMPTY_KEY in msg.content:
+		return 1
 	for x in msg.content.split('\n'):
-		if config.EMPTY_KEY in x or config.EMPTY_SLOT in x:
+		if config.EMPTY_SLOT in x:
 			return int(x[2:x.index(':')])
 	last_slot = msg.content.split('\n')[-1]
 	slot = int(last_slot[2:last_slot.index(':')]) + 1
@@ -83,7 +89,6 @@ async def edit_event_status(index: int, text: str, list_msg: discord.Message):
 @nemo.command("!stop")
 @helper.event_command
 @helper.organizer_only
-@helper.auto_delete
 async def stop(*, 
 			   channel: discord.TextChannel, 
 			   member: discord.Member, 
@@ -91,6 +96,7 @@ async def stop(*,
 			   guild: discord.Guild, 
 			   event: int,
 			   **_):
+	await message.delete()
 	msg = await channel.send(config.STOP_MSG.replace("@User", f"<@{member.id}>"))
 	await msg.add_reaction("✅")
 	try:

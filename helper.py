@@ -26,7 +26,7 @@ def organizer_only(f):
 		member: discord.Member = kwargs["member"]
 		channel: discord.TextChannel = kwargs["message"].channel
 		event: int = kwargs["event"]
-		if "administrator" in channel.permissions_for(member):
+		if channel.permissions_for(member).administrator:
 			return await f(*args, **kwargs)
 		if any(x for x in member.roles if x.name == f"{config.ORGANIZER_PREFIX}{event}"):
 			return await f(*args, **kwargs)

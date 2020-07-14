@@ -3,7 +3,7 @@ import os
 TOKEN = os.environ["NEMO_TOKEN"] 
 
 CATEGORY_NAME = "EVENTS"
-ORGANIZATION_NAME = "organization"
+ORGANIZATION_NAME = "organisation"
 
 
 
