@@ -40,12 +40,12 @@ async def help_msg(channel: discord.TextChannel):
 
 @nemo.reaction(lambda reaction, member: reaction.message.author.bot and config.CREATE_KEY in reaction.message.content)
 async def create_event(reaction: discord.Reaction, message: discord.Message, member: discord.Member, guild: discord.Guild, **_):
-	list_msg: discord.Message = next(x async for x in message.channel.history() if config.LIST_KEY in x.content)
+	list_msg: discord.Message = [x async for x in message.channel.history() if config.LIST_KEY in x.content][0] 
 	index = get_new_event_index(list_msg)
-	await edit_event_status(index, config.CONFIGURING_EVENT, list_msg)
+	await edit_event_status(index, config.CONFIGURING_EVENT.replace("@User", f"<@{member.id}>"), list_msg)
 	await reaction.remove(member)
 	
-	org_role = await guild.create_role(name=f"{config.ORGANIZER_PREFIX}{index}", color=discord.Color.purple)
+	org_role = await guild.create_role(name=f"{config.ORGANIZER_PREFIX}{index}", color=discord.Color.purple())
 	await member.add_roles(org_role)
 	user_role = await guild.create_role(name=f"{config.PARTICIPANT_PREFIX}{index}")
 	await member.add_roles(user_role)
@@ -54,7 +54,7 @@ async def create_event(reaction: discord.Reaction, message: discord.Message, mem
 		guild.me: discord.PermissionOverwrite(read_messages=True),
 		org_role: discord.PermissionOverwrite(read_messages=True, manage_messages=True),
 		user_role: discord.PermissionOverwrite(read_messages=True)
-	}, category=next(x.name == config.CATEGORY_NAME and x.type == discord.ChannelType.category for x in guild.channels))
+	}, category=message.channel.category)
 	await list_msg.add_reaction(number_emojis[index - 1])
 	await channel.send(config.SETUP_MSG)
 	

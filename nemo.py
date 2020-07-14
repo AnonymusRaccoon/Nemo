@@ -39,11 +39,21 @@ class Nemo(discord.Client):
 		if handler is None:
 			return
 		try:
-			await handler[1](reaction=reaction, member=member, message=reaction.message)
+			await handler[1](reaction=reaction, member=member, message=reaction.message, guild=reaction.message.guild)
 		except Exception:
 			await reaction.message.channel.send(f"Fatal error: {traceback.format_exc()}")
 			raise
-	
+
+	async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
+		if payload.event_type != "REACTION_ADD":
+			return
+		
+		channel: discord.TextChannel = self.get_channel(payload.channel_id)
+		message: discord.Message = await channel.fetch_message(payload.message_id)
+		key = f"{payload.emoji.name}:{payload.emoji.id}" if payload.emoji.id else payload.emoji.name
+		reaction = discord.utils.get(message.reactions, emoji=key)
+		await self.on_reaction_add(reaction, payload.member)
+
 	def reaction(self, predicate: Callable[[discord.Reaction, discord.Member], bool]):
 		def wrapper(f):
 			self.reactions.append((predicate, f))

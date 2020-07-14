@@ -58,5 +58,5 @@ SETUP_MSG = """**Pour finaliser la création de l'event, faite l'une des command
 Ouvrir l'event a tous le monde:
 ```!open [message]```
 Faire un event privé et inviter les personnes individuellement:
-```!private```");
+```!private```
 """
