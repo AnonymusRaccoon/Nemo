@@ -1,4 +1,6 @@
-TOKEN = "ENTER YOUR DISCORD TOKEN HERE"
+import os
+
+TOKEN = os.environ["NEMO_TOKEN"] 
 
 CATEGORY_NAME = "EVENTS"
 ORGANIZATION_NAME = "organization"
@@ -34,7 +36,27 @@ EVENT_LIST = """**Liste des events ouverts:**
 
 **Aucun event ouvert.**
 """
+LIST_KEY = "Liste des events ouverts"
+EMPTY_KEY = "Aucun event ouvert"
+EMPTY_SLOT = "Aucun event sur ce slot."
 
 CREATE_MSG = """**Créer un event: ** 
 Pour créer un event, click sur ✅
+"""
+CREATE_KEY = "Créer un event"
+
+CONFIGURING_EVENT = "@User configure l'event."
+
+
+EVENT_SUFFIX = "-event"
+ORGANIZER_PREFIX = "Organisateur-"
+PARTICIPANT_PREFIX = "Event-"
+
+
+SETUP_MSG = """**Pour finaliser la création de l'event, faite l'une des commandes si dessous:**
+
+Ouvrir l'event a tous le monde:
+```!open [message]```
+Faire un event privé et inviter les personnes individuellement:
+```!private```");
 """

@@ -1,4 +1,6 @@
 import traceback
+from typing import Callable
+
 import discord
 
 
@@ -6,6 +8,7 @@ class Nemo(discord.Client):
 	def __init__(self, **options):
 		super().__init__(**options)
 		self.commands = {}
+		self.reactions = []
 
 	async def on_ready(self):
 		print(f"Logged in as {self.user}.")
@@ -26,4 +29,24 @@ class Nemo(discord.Client):
 		def wrapper(f):
 			self.commands[cmd] = f
 			return f
+		
+		return wrapper
+	
+	async def on_reaction_add(self, reaction: discord.Reaction, member: discord.Member):
+		if member.bot:
+			return
+		handler = next((x for x in self.reactions if x[0](reaction, member)), None)
+		if handler is None:
+			return
+		try:
+			await handler[1](reaction=reaction, member=member, message=reaction.message)
+		except Exception:
+			await reaction.message.channel.send(f"Fatal error: {traceback.format_exc()}")
+			raise
+	
+	def reaction(self, predicate: Callable[[discord.Reaction, discord.Member], bool]):
+		def wrapper(f):
+			self.reactions.append((predicate, f))
+			return f
+		
 		return wrapper
