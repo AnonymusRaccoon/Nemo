@@ -20,7 +20,7 @@ class Nemo(discord.Client):
 			return
 		print(f"{message.author.display_name} used the command: '{cmd[0]}'")
 		try:
-			await f(cmd[1::], message=message, guild=message.guild)
+			await f(cmd[1::], message=message, guild=message.guild, channel=message.channel)
 		except Exception:
 			await message.channel.send(f"Fatal error: {traceback.format_exc()}")
 			raise

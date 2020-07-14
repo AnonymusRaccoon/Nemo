@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import asyncio
+
 import nemo
 import helper
 import config
@@ -76,6 +78,39 @@ async def edit_event_status(index: int, text: str, list_msg: discord.Message):
 		content.append(f"**{index}:** {text}")
 	await list_msg.edit(content="\n".join(content))
 
+
+@nemo.command("!close")
+@nemo.command("!stop")
+@helper.event_command
+@helper.organizer_only
+@helper.auto_delete
+async def stop(*, 
+			   channel: discord.TextChannel, 
+			   member: discord.Member, 
+			   message: discord.Message, 
+			   guild: discord.Guild, 
+			   event: int,
+			   **_):
+	msg = await channel.send(config.STOP_MSG.replace("@User", f"<@{member.id}>"))
+	await msg.add_reaction("✅")
+	try:
+		await nemo.wait_for("reaction_add", timeout=60, check=lambda reaction, user: user == message.author)
+	except asyncio.TimeoutError:
+		await msg.delete()
+		return
+	await discord.utils.get(guild.roles, name=f"{config.ORGANIZER_PREFIX}{event}").delete()
+	await discord.utils.get(guild.roles, name=f"{config.PARTICIPANT_PREFIX}{event}").delete()
+	await channel.delete()
+	org_channel: discord.TextChannel = discord.utils.get(guild.channels, name=config.ORGANIZATION_NAME)
+	list_msg: discord.Message = [x async for x in org_channel.history() if config.LIST_KEY in x.content][0] 
+	if f"**{event + 1}:**" in list_msg.content:
+		await edit_event_status(event, config.EMPTY_SLOT, list_msg)
+	elif event == 1:
+		await list_msg.edit(content=config.EVENT_LIST)
+	else:
+		await list_msg.edit(content='\n'.join(list_msg.content.split('\n')[:-1]))
+	await list_msg.clear_reaction(number_emojis[event - 1])
+	
 
 if __name__ == "__main__":
 	nemo.run(config.TOKEN)

@@ -60,3 +60,5 @@ Ouvrir l'event a tous le monde:
 Faire un event privé et inviter les personnes individuellement:
 ```!private```
 """
+
+STOP_MSG = """Pour confirmer la fermeture de l'event, cliquez sur ✅."""
