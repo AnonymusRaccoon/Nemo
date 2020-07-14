@@ -41,16 +41,17 @@ async def help_msg(channel: discord.TextChannel):
 
 
 @nemo.reaction(lambda reaction, member: reaction.message.author.bot and config.CREATE_KEY in reaction.message.content)
-async def create_event(reaction: discord.Reaction, message: discord.Message, member: discord.Member, guild: discord.Guild, **_):
-	list_msg: discord.Message = [x async for x in message.channel.history() if config.LIST_KEY in x.content][0] 
+async def create_event(reaction: discord.Reaction, message: discord.Message, member: discord.Member,
+					   guild: discord.Guild, **_):
+	list_msg: discord.Message = [x async for x in message.channel.history() if config.LIST_KEY in x.content][0]
 	index = get_new_event_index(list_msg)
 	if index == -1:
 		await reaction.remove(member)
 		return
-	
+
 	await edit_event_status(index, config.CONFIGURING_EVENT.replace("@User", f"<@{member.id}>"), list_msg)
 	await reaction.remove(member)
-	
+
 	org_role = await guild.create_role(name=f"{config.ORGANIZER_PREFIX}{index}", color=discord.Color.purple())
 	await member.add_roles(org_role)
 	user_role = await guild.create_role(name=f"{config.PARTICIPANT_PREFIX}{index}")
@@ -63,7 +64,7 @@ async def create_event(reaction: discord.Reaction, message: discord.Message, mem
 	}, category=message.channel.category)
 	await list_msg.add_reaction(number_emojis[index - 1])
 	await channel.send(config.SETUP_MSG)
-	
+
 
 def get_new_event_index(msg: discord.Message):
 	if config.EMPTY_KEY in msg.content:
@@ -89,11 +90,11 @@ async def edit_event_status(index: int, text: str, list_msg: discord.Message):
 @nemo.command("!stop")
 @helper.event_command
 @helper.organizer_only
-async def stop(*, 
-			   channel: discord.TextChannel, 
-			   member: discord.Member, 
-			   message: discord.Message, 
-			   guild: discord.Guild, 
+async def stop(*,
+			   channel: discord.TextChannel,
+			   member: discord.Member,
+			   message: discord.Message,
+			   guild: discord.Guild,
 			   event: int,
 			   **_):
 	await message.delete()
@@ -108,7 +109,7 @@ async def stop(*,
 	await discord.utils.get(guild.roles, name=f"{config.PARTICIPANT_PREFIX}{event}").delete()
 	await channel.delete()
 	org_channel: discord.TextChannel = discord.utils.get(guild.channels, name=config.ORGANIZATION_NAME)
-	list_msg: discord.Message = [x async for x in org_channel.history() if config.LIST_KEY in x.content][0] 
+	list_msg: discord.Message = [x async for x in org_channel.history() if config.LIST_KEY in x.content][0]
 	if f"**{event + 1}:**" in list_msg.content:
 		await edit_event_status(event, config.EMPTY_SLOT, list_msg)
 	elif event == 1:
@@ -116,7 +117,31 @@ async def stop(*,
 	else:
 		await list_msg.edit(content='\n'.join(list_msg.content.split('\n')[:-1]))
 	await list_msg.clear_reaction(number_emojis[event - 1])
-	
+
+
+@nemo.command("!open")
+@helper.event_command
+@helper.organizer_only
+@helper.auto_delete
+async def open_cmd(*,
+				   message: discord.Message,
+				   guild: discord.Guild,
+				   channel: discord.TextChannel,
+				   event: int,
+				   **_):
+	org_channel: discord.TextChannel = discord.utils.get(guild.channels, name=config.ORGANIZATION_NAME)
+	list_msg: discord.Message = [x async for x in org_channel.history() if config.LIST_KEY in x.content][0]
+	status = message.content[len("!open "):]
+	skip_broadcast = config.EVENT_CONFIGURING_KEY not in list_msg.content
+	await edit_event_status(event, status, list_msg)
+	await channel.send(config.SET_EVENT_MSG.replace("@Status", status).replace("@User", f"<@{message.author.id}>"))
+	if skip_broadcast:
+		return
+	async for x in org_channel.history():
+		if config.NEW_EVENT_KEY in x.content:
+			await x.delete()
+	await org_channel.send(config.NEW_EVENT.replace("@everyone", f"{guild.default_role}").replace("@id", str(event)))
+
 
 if __name__ == "__main__":
 	nemo.run(config.TOKEN)

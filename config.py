@@ -46,7 +46,7 @@ Pour créer un event, click sur ✅
 CREATE_KEY = "Créer un event"
 
 CONFIGURING_EVENT = "@User configure l'event."
-
+EVENT_CONFIGURING_KEY = "configure l'event."
 
 EVENT_SUFFIX = "-event"
 ORGANIZER_PREFIX = "Organisateur-"
@@ -62,3 +62,8 @@ Faire un event privé et inviter les personnes individuellement:
 """
 
 STOP_MSG = """Pour confirmer la fermeture de l'event, cliquez sur ✅."""
+
+SET_EVENT_MSG = """@User a changé la description de l'event pour "@Status"."""
+
+NEW_EVENT = """@everyone Nouvel event (@id)"""
+NEW_EVENT_KEY = """Nouvel event ("""
