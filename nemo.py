@@ -19,6 +19,14 @@ class Nemo(discord.Client):
 			return
 		f = self.commands.get(cmd[0])
 		if f is None:
+			if ":vote:" in cmd:
+				await message.add_reaction("✅")
+				await message.add_reaction("❎")
+			elif ":vote-4:" in cmd:
+				await message.add_reaction("1⃣")
+				await message.add_reaction("2⃣")
+				await message.add_reaction("3⃣")
+				await message.add_reaction("4⃣")
 			return
 		print(f"{message.author.display_name} used the command: '{cmd[0]}'")
 		try:
@@ -39,6 +47,10 @@ class Nemo(discord.Client):
 			return
 		handler = next((x for x in self.reactions if x[0](reaction, member)), None)
 		if handler is None:
+			if ":vote:" in reaction.message.content or ":vote-4:" in reaction.message.content:
+				for vote in reaction.message.reactions:
+					if vote != reaction:
+						await vote.remove(member)
 			return
 		try:
 			await handler[1](reaction=reaction, member=member, message=reaction.message, guild=reaction.message.guild, channel=reaction.message.channel)
