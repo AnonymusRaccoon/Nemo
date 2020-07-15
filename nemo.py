@@ -62,6 +62,9 @@ class Nemo(discord.Client):
 		if payload.event_type != "REACTION_ADD":
 			return
 		
+		if any([x for x in self.cached_messages if x.id == payload.message_id]):
+			return
+		
 		channel: discord.TextChannel = self.get_channel(payload.channel_id)
 		message: discord.Message = await channel.fetch_message(payload.message_id)
 		key = f"{payload.emoji.name}:{payload.emoji.id}" if payload.emoji.id else payload.emoji.name
