@@ -78,3 +78,7 @@ Vous pouvez le quitter en tappant !leave.
 """
 
 LEAVE_MSG = "@User vient de quitter l'event."
+
+INVITE_MSG = """@User vient d'inviter @Invited.
+Vous pouvez le quitter en tappant !leave.
+"""

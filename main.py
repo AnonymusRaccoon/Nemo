@@ -211,5 +211,22 @@ async def rename(*,
 	await channel.edit(name=f"{event}-{message.content[len('!name '):]}")
 
 
+@nemo.command("!invite")
+@helper.event_command
+@helper.auto_delete
+async def invite(*,
+				 channel: discord.TextChannel,
+				 member: discord.Member,
+				 message: discord.Message,
+				 guild: discord.Guild,
+				 event: int,
+				 **_):
+	role = discord.utils.get(guild.roles, name=f"{config.PARTICIPANT_PREFIX}{event}")
+	for user in message.mentions:
+		await user.add_roles(role)
+	users = ", ".join([f"<@{user.id}>" for user in message.mentions])
+	await channel.send(config.INVITE_MSG.replace("@User", f"<@{member.id}>").replace("@Invited", users))
+
+
 if __name__ == "__main__":
 	nemo.run(config.TOKEN)
