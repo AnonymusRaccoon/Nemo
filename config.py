@@ -82,3 +82,5 @@ LEAVE_MSG = "@User vient de quitter l'event."
 INVITE_MSG = """@User vient d'inviter @Invited.
 Vous pouvez le quitter en tappant !leave.
 """
+KICK_MSG = """@User vient de kick @Invited."""
+COLAB_MSG = """@User vient d'ajouter @Invited en temps que collaborateur."""

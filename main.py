@@ -228,5 +228,39 @@ async def invite(*,
 	await channel.send(config.INVITE_MSG.replace("@User", f"<@{member.id}>").replace("@Invited", users))
 
 
+@nemo.command("!kick")
+@helper.event_command
+@helper.auto_delete
+async def kick(*,
+				 channel: discord.TextChannel,
+				 member: discord.Member,
+				 message: discord.Message,
+				 guild: discord.Guild,
+				 event: int,
+				 **_):
+	role = discord.utils.get(guild.roles, name=f"{config.PARTICIPANT_PREFIX}{event}")
+	for user in message.mentions:
+		await user.remove_roles(role)
+	users = ", ".join([f"<@{user.id}>" for user in message.mentions])
+	await channel.send(config.KICK_MSG.replace("@User", f"<@{member.id}>").replace("@Invited", users))
+
+
+@nemo.command("!colab")
+@helper.event_command
+@helper.auto_delete
+async def colab(*,
+				 channel: discord.TextChannel,
+				 member: discord.Member,
+				 message: discord.Message,
+				 guild: discord.Guild,
+				 event: int,
+				 **_):
+	role = discord.utils.get(guild.roles, name=f"{config.ORGANIZER_PREFIX}{event}")
+	for user in message.mentions:
+		await user.add_roles(role)
+	users = ", ".join([f"<@{user.id}>" for user in message.mentions])
+	await channel.send(config.COLAB_MSG.replace("@User", f"<@{member.id}>").replace("@Invited", users))
+	
+
 if __name__ == "__main__":
 	nemo.run(config.TOKEN)
