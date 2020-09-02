@@ -3,6 +3,7 @@ import config
 
 
 def auto_delete(f):
+	@wraps(f)
 	async def wrapper(*args, **kwargs):
 		ret = await f(*args, **kwargs)
 		await kwargs["message"].delete()
@@ -12,6 +13,7 @@ def auto_delete(f):
 
 
 def event_command(f):
+	@wraps(f)
 	async def wrapper(*args, **kwargs):
 		channel: discord.TextChannel = kwargs["message"].channel
 		if not channel.name[:1].isdigit():
@@ -22,6 +24,7 @@ def event_command(f):
 
 
 def organizer_only(f):
+	@wraps(f)
 	async def wrapper(*args, **kwargs):
 		member: discord.Member = kwargs["member"]
 		channel: discord.TextChannel = kwargs["message"].channel
