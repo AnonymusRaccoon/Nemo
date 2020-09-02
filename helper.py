@@ -1,5 +1,6 @@
 import discord
 import config
+from functools import wraps
 
 
 def auto_delete(f):
