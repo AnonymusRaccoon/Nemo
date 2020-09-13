@@ -2,9 +2,11 @@ import discord
 from discord import NotFound
 
 import config
+from functools import wraps
 
 
 def auto_delete(f):
+	@wraps(f)
 	async def wrapper(*args, **kwargs):
 		ret = await f(*args, **kwargs)
 		try:
@@ -17,6 +19,7 @@ def auto_delete(f):
 
 
 def event_command(f):
+	@wraps(f)
 	async def wrapper(*args, **kwargs):
 		channel: discord.TextChannel = kwargs["message"].channel
 		if not channel.name[:1].isdigit():
@@ -27,6 +30,7 @@ def event_command(f):
 
 
 def organizer_only(f):
+	@wraps(f)
 	async def wrapper(*args, **kwargs):
 		member: discord.Member = kwargs["member"]
 		channel: discord.TextChannel = kwargs["message"].channel
