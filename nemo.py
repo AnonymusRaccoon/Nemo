@@ -53,7 +53,11 @@ class Nemo(discord.Client):
 						await vote.remove(member)
 			return
 		try:
-			await handler[1](reaction=reaction, member=member, message=reaction.message, guild=reaction.message.guild, channel=reaction.message.channel)
+			await handler[1](reaction=reaction,
+							 member=member,
+							 message=reaction.message,
+							 guild=reaction.message.guild,
+							 channel=reaction.message.channel)
 		except Exception:
 			await reaction.message.channel.send(f"Fatal error: {traceback.format_exc()}")
 			raise

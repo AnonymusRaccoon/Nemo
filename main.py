@@ -47,7 +47,10 @@ async def join_event(*,
 					 guild: discord.Guild,
 					 channel: discord.TextChannel,
 					 **_):
-	event: int = number_emojis.index(reaction.emoji) + 1
+	try:
+		event: int = number_emojis.index(reaction.emoji) + 1
+	except ValueError:
+		return
 	role: str = discord.utils.get(guild.roles, name=f"{config.PARTICIPANT_PREFIX}{event}")
 	if role is None or role in member.roles:
 		return

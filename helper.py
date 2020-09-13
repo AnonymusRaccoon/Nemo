@@ -1,11 +1,16 @@
 import discord
+from discord import NotFound
+
 import config
 
 
 def auto_delete(f):
 	async def wrapper(*args, **kwargs):
 		ret = await f(*args, **kwargs)
-		await kwargs["message"].delete()
+		try:
+			await kwargs["message"].delete()
+		except NotFound:
+			pass
 		return ret
 
 	return wrapper
