@@ -32,7 +32,7 @@ class Nemo(discord.Client):
 		try:
 			await f(args=cmd[1::], message=message, guild=message.guild, channel=message.channel, member=message.author)
 		except Exception:
-			await message.channel.send(f"Fatal error: {traceback.format_exc()}")
+			await message.channel.send(f"Fatal error: ```{traceback.format_exc()}```")
 			raise
 
 	def command(self, cmd):
@@ -59,7 +59,7 @@ class Nemo(discord.Client):
 							 guild=reaction.message.guild,
 							 channel=reaction.message.channel)
 		except Exception:
-			await reaction.message.channel.send(f"Fatal error: {traceback.format_exc()}")
+			await reaction.message.channel.send(f"Fatal error: ```{traceback.format_exc()}```")
 			raise
 
 	async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
